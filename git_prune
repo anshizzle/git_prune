@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+
+branches = `git branch | grep -v HEAD`
+remote_branches = `git branch -r | grep -v HEAD`
+
+branches = branches.split("\n").map(&:strip)
+branches = branches.select { |br| !br.include? "*" } # ignore the branch that user is currently on
+
+remote_branches = remote_branches.split("\n").map(&:strip)
+
+remote_branches = remote_branches.map { |rb| rb.sub("origin/" , "") }
+
+puts "------------------"
+puts "REMOTE BRANCHES: "
+puts "------------------"
+puts remote_branches
+
+puts "\n-----------------\n"
+puts "LOCAL BRANCHES:"
+puts "------------------"
+puts branches
+
+
+puts "\nDetermining local branches to delete..."
+
+branches_to_delete = branches.select { |br| not remote_branches.include? br }
+
+if branches_to_delete.length == 0 
+  puts "No branches to delete!"
+  exit
+end
+
+
+branches_to_delete.each do |branch|
+  puts "Delete branch #{branch}? (y/n)"
+  resp = gets.chomp
+  case resp
+  when "y"
+    command = "git branch -D #{branch}"
+    puts "deleting branch #{branch}..."
+    system(command)
+  when "n"
+    continue
+  else
+    puts "unrecognized response #{resp}"
+    redo
+  end
+end
