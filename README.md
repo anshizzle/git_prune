@@ -7,5 +7,5 @@ Cleans your local branches based on existing remote branches
 - run git_prune
 
 ## To-do:
--Add option to suppress output
--Add option to suppress confirmation for each branch
+- Add option to suppress output
+- Add option to suppress confirmation for each branch
